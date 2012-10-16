@@ -4,22 +4,9 @@
 
 
 #include <Servo.h> 
- 
-Servo myservo1;  // create servo object to control a servo 
-Servo myservo2;  // create servo object to control a servo 
-Servo myservo3;  // create servo object to control a servo 
-/*
-Servo myservo4;  // create servo object to control a servo 
-Servo myservo5;  // create servo object to control a servo 
-Servo myservo6;  // create servo object to control a servo 
-Servo myservo7;  // create servo object to control a servo 
-Servo myservo8;  // create servo object to control a servo 
-Servo myservo9;  // create servo object to control a servo 
-Servo myservo10;  // create servo object to control a servo 
-Servo myservo11;  // create servo object to control a servo 
-Servo myservo12;  // create servo object to control a servo 
-*/
- 
+const int servos_count=12;
+Servo myservos[servos_count];  // create servo object to control a servo 
+const int start_servo=22;
 int pos = 0;    // variable to store the servo position 
 float ground=-100;
 float ceiling=-50;
@@ -29,20 +16,9 @@ boolean s=false;
 void setup() 
 {
   pinMode(34,OUTPUT); 
-  myservo1.attach(22);  // attaches the servo on pin 9 to the servo object 
-  myservo2.attach(23);  // attaches the servo on pin 9 to the servo object 
-  myservo3.attach(24);  // attaches the servo on pin 9 to the servo object 
-  /*
-  myservo4.attach(25);  // attaches the servo on pin 9 to the servo object 
-  myservo5.attach(26);  // attaches the servo on pin 9 to the servo object 
-  myservo6.attach(27);  // attaches the servo on pin 9 to the servo object 
-  myservo7.attach(28);  // attaches the servo on pin 9 to the servo object 
-  myservo8.attach(29);  // attaches the servo on pin 9 to the servo object 
-  myservo9.attach(30);  // attaches the servo on pin 9 to the servo object 
-  myservo10.attach(31);  // attaches the servo on pin 9 to the servo object 
-  myservo11.attach(32);  // attaches the servo on pin 9 to the servo object 
-  myservo12.attach(33);  // attaches the servo on pin 9 to the servo object 
-  */
+  int i;
+  for(i=0;i<servos_count;i++)
+    myservos[i].attach(i+start_servo);
   nil_servos();
 } 
  
@@ -51,45 +27,35 @@ void loop()
 {
   s=!s;
   digitalWrite(34,s);
-  nil_servos();
-  delay(50);
-  return;
-  for(int x=-38;x<38;x++)
+  for(int serv=0;serv<4;serv++)
   {
-    go_to_xyz(x,0,ground);
-    delay(10);                       // waits 15ms for the servo to reach the position 
+    for(int x=-38;x<38;x++)
+    {
+      go_to_xyz(serv,x,0,ground);
+      delay(10);                       // waits 15ms for the servo to reach the position 
+    }
+    go_to_xyz(38,0,ceiling);
+    delay(500);
+    go_to_xyz(-38,0,ceiling);
+    delay(500);
+    go_to_xyz(-38,0,ground);
+    delay(500);
   }
-  go_to_xyz(38,0,ceiling);
-  delay(500);
-  go_to_xyz(-38,0,ceiling);
-  delay(500);
-  go_to_xyz(-38,0,ground);
-  delay(500);
-
+  
 }
 void nil_servos()
 {
-  myservo1.write(1);              // tell servo to go to position in variable 'pos' 
-  myservo2.write(1);              // tell servo to go to position in variable 'pos' 
-  myservo3.write(1);              // tell servo to go to position in variable 'pos'
-  /*myservo4.write(0);              // tell servo to go to position in variable 'pos' 
-  myservo5.write(0);              // tell servo to go to position in variable 'pos' 
-  myservo6.write(0);              // tell servo to go to position in variable 'pos'
-  myservo7.write(0);              // tell servo to go to position in variable 'pos' 
-  myservo8.write(0);              // tell servo to go to position in variable 'pos' 
-  myservo9.write(0);              // tell servo to go to position in variable 'pos'
-  myservo10.write(0);              // tell servo to go to position in variable 'pos' 
-  myservo11.write(0);              // tell servo to go to position in variable 'pos' 
-  myservo12.write(0);              // tell servo to go to position in variable 'pos'
-*/
+  int i;
+  for(i=0;i<servos_count;i++)
+    myservos[i].write(0);
 }
-void go_to_xyz(float x,float y, float z)
+void go_to_xyz(int servo,float x,float y, float z)
 {
   float t1,t2,t3;
   delta_calcInverse(x,y,z,t1,t2,t3);
-  myservo1.write(t1);              // tell servo to go to position in variable 'pos' 
-  myservo2.write(t2);              // tell servo to go to position in variable 'pos' 
-  myservo3.write(t3);              // tell servo to go to position in variable 'pos'
+  myservos[servo].write(t1);              // tell servo to go to position in variable 'pos' 
+  myservos[servo+1].write(t2);              // tell servo to go to position in variable 'pos' 
+  myservos[servo+2].write(t3);              // tell servo to go to position in variable 'pos'
     
 }
  // robot geometry
